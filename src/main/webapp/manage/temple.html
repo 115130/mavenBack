@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <link rel="stylesheet" type="text/css" href="https://www.jeasyui.com/easyui/themes/default/easyui.css">
+  <link rel="stylesheet" type="text/css" href="https://www.jeasyui.com/easyui/themes/icon.css">
+  <link rel="stylesheet" type="text/css" href="https://www.jeasyui.com/easyui/themes/color.css">
+  <link rel="stylesheet" type="text/css" href="https://www.jeasyui.com/easyui/demo/demo.css">
+  <link rel="stylesheet" type="text/css" href="../css/semantic.min.css">
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script type="text/javascript" src="../js/semantic.min.js"></script>
+  <script type="text/javascript" src="https://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
+</head>
+<body>
+<div >
+  <div class="five ui buttons">
+    <button class="ui button">概述</button>
+    <button class="ui button">规格</button>
+    <button class="ui button">担保</button>
+    <button class="ui button">回顾</button>
+    <button class="ui button">支持</button>
+  </div>
+  <div class="three ui buttons">
+    <button class="ui button">概述</button>
+    <button class="ui button">规格</button>
+    <button class="ui button">支持</button>
+  </div>
+  <table id="dg" title="表管理器" class="easyui-datagrid" style="width:100%;height:100%"
+         url="http://localhost:8080/mavenBack/manage/displayData"``
+         toolbar="#toolbar" pagination="true"
+         rownumbers="true" fitColumns="true" singleSelect="true">
+    <thead>
+    <tr>
+      <th field="comm" width="50">comm</th>
+      <th field="deptNo" width="50">deptNo</th>
+      <th field="eName" width="50">eName</th>
+      <th field="empNo" width="50">empNo</th>
+      <th field="hiredate" width="50">hiredate</th>
+      <th field="job" width="50">job</th>
+      <th field="mgr" width="50">mgr</th>
+      <th field="sal" width="50">sal</th>
+    </tr>
+    </thead>
+  </table>
+</div>
+<div id="toolbar">
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">添加数据</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">修改数据</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">删除数据</a>
+</div>
+
+<div id="dlg" class="easyui-dialog" style="width:400px" data-options="closed:true,modal:true,border:'thin',buttons:'#dlg-buttons'"><!-- 用于提交用户修改以及手动添加用户的玩意儿 -->
+  <form id="fm" method="post" novalidate style="margin:0;padding:20px 50px">
+    <h3>用户信息</h3>
+    <div style="margin-bottom:10px">
+      <input name="firstname" class="easyui-textbox" required="true" label="First Name:" style="width:100%">
+    </div>
+    <div style="margin-bottom:10px">
+      <input name="lastname" class="easyui-textbox" required="true" label="Last Name:" style="width:100%">
+    </div>
+    <div style="margin-bottom:10px">
+      <input name="phone" class="easyui-textbox" required="true" label="Phone:" style="width:100%">
+    </div>
+    <div style="margin-bottom:10px">
+      <input name="email" class="easyui-textbox" required="true" validType="email" label="Email:" style="width:100%">
+    </div>
+  </form>
+</div>
+<div id="dlg-buttons">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">保存</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">取消</a>
+</div>
+<script type="text/javascript">
+  var url;
+  function newUser(){
+    $('#dlg').dialog('open').dialog('center').dialog('setTitle','New User');
+    $('#fm').form('clear');
+    url = 'http://localhost:8080/mavenBack/manage/addData';
+  }
+  function editUser(){
+    var row = $('#dg').datagrid('getSelected');
+    if (row){
+      $('#dlg').dialog('open').dialog('center').dialog('setTitle','Edit User');
+      $('#fm').form('load',row);
+      url = 'http://localhost:8080/manage/addData?id='+row.id;
+    }
+  }
+  function saveUser(){
+    $('#fm').form('submit',{
+      url: url,
+      onSubmit: function(){
+        return $(this).form('validate');
+      },
+      success: function(result){
+        var result = eval('('+result+')');
+        if (result.errorMsg){
+          $.messager.show({
+            title: 'Error',
+            msg: result.errorMsg
+          });
+        } else {
+          $('#dlg').dialog('close');        // close the dialog
+          $('#dg').datagrid('reload');    // reload the user data
+        }
+      }
+    });
+  }
+  function destroyUser(){//删除用户
+    var row = $('#dg').datagrid('getSelected');
+    if (row){
+      $.messager.confirm('Confirm','确认要删除此用户吗?',function(r){
+        if (r){
+          $.post('destroy_user.php',{id:row.id},function(result){
+            if (result.success){
+              $('#dg').datagrid('reload');    // reload the user data
+            } else {
+              $.messager.show({    // show error message
+                title: 'Error',
+                msg: result.errorMsg
+              });
+            }
+          },'json');
+        }
+      });
+    }
+  }
+</script>
+</body>
+</html>
