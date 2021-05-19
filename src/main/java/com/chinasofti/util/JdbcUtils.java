@@ -1,9 +1,6 @@
 package com.chinasofti.util;
 
 
-
-
-
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -13,8 +10,7 @@ import java.util.Properties;
 public class JdbcUtils {
     private static DataSource  dataSource=null;
 
-    public static DataSource getDataSource(){
-
+    public static synchronized DataSource getDataSource(){
         try {
             Properties properties = new Properties();
             properties.load(JdbcUtils.class.getClassLoader().getResourceAsStream("druid.properties"));

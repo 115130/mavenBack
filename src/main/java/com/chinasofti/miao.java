@@ -9,8 +9,11 @@ import java.util.List;
 
 public class miao {
     public static void main(String[] args) {
-        EmpService service = new EmpService();
-        List<Emp> emps = service.queryAllEmp();
-        System.out.println(emps);
+        for (int i = 0; i < 100000; i++) {
+            EmpService service = new EmpService();
+            List<Emp> emps = service.queryAllEmp();
+            System.out.println(emps);
+            System.out.println(i);
+        }
     }
 }

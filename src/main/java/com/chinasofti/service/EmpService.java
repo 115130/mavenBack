@@ -10,35 +10,30 @@ import javax.sql.DataSource;
 import java.util.List;
 
 public class EmpService {
-    BaseDao<Emp> empDao = new EmpDaoImpl();
+    private final BaseDao<Emp>  empDao = new EmpDaoImpl();
+    private static final DataSource dataSource = JdbcUtils.getDataSource();
 
-
-
-    public List<Emp> queryAllEmp() {
-        DataSource dataSource = JdbcUtils.getDataSource();
+    public EmpService() {
         ((EmpDaoImpl) empDao).setTemplate(new JdbcTemplate(dataSource));
-        return empDao.queryAll();
-
     }
 
+    public List<Emp> queryAllEmp() {
+        return empDao.queryAll();
+    }
 
     public int insert(Emp emp) {
-        ((EmpDaoImpl) empDao).setTemplate(new JdbcTemplate(JdbcUtils.getDataSource()));
         return empDao.insert(emp);
     }
 
     public int update(Emp emp) {
-        ((EmpDaoImpl) empDao).setTemplate(new JdbcTemplate(JdbcUtils.getDataSource()));
         return empDao.update(emp);
     }
 
     public int delete(int i) {
-        ((EmpDaoImpl) empDao).setTemplate(new JdbcTemplate(JdbcUtils.getDataSource()));
         return empDao.delete(i);
     }
 
     public List<Emp> queryEmpByPage(int i, int j) {
-        ((EmpDaoImpl) empDao).setTemplate(new JdbcTemplate(JdbcUtils.getDataSource()));
-        return empDao.queryByPage(i,j);
+        return empDao.queryByPage(i, j);
     }
 }

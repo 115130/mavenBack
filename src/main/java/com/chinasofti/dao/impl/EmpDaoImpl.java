@@ -8,10 +8,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 
 public class EmpDaoImpl implements BaseDao<Emp> {
-    private JdbcTemplate template;
+    private static JdbcTemplate template;
 
     public void setTemplate(JdbcTemplate template) {
-        this.template = template;
+        EmpDaoImpl.template = template;
     }
 
     @Override
